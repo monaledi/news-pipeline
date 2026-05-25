@@ -1,6 +1,6 @@
 import sqlite3
 
-
+#creates the databse if not there already
 def create_database():
     connection = sqlite3.connect("news.db")
     cursor = connection.cursor()
@@ -24,6 +24,7 @@ def create_database():
     connection.close()
 
 
+#insterts articles into the database, retruns true or false if successful or not. assuming false means it is a duplicate
 def insert_article(title, source, country, published_at, url):
     connection = sqlite3.connect("news.db")
     cursor = connection.cursor()
@@ -45,13 +46,13 @@ def insert_article(title, source, country, published_at, url):
         connection.close()
 
 
+#logs information from  fetch run with counts of saved and dupes
 def log_fetch(fetched_at, country, articles_fetched, duplicates_skipped):
 
     connection = sqlite3.connect("news.db")
     cursor = connection.cursor()
 
-    cursor.execute("""
-    INSERT INTO fetch_logs
+    cursor.execute("""INSERT INTO fetch_logs
     (fetched_at, country, articles_fetched, duplicates_skipped)
     VALUES (?, ?, ?, ?)
     """, (

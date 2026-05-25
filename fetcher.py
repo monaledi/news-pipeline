@@ -6,7 +6,7 @@ from database import insert_article, log_fetch
 
 NEWS_API_URL = "https://newsapi.org/v2/everything"
 
-
+#builds parameters for the query
 def build_params(api_key, country_name):
     return {
         "q": country_name,
@@ -16,11 +16,23 @@ def build_params(api_key, country_name):
     }
 
 
+#sends request to newsAPI
 def get_articles(api_key, country_name):
-    response = requests.get(NEWS_API_URL, params=build_params(api_key, country_name))
 
-    data = response.json()
+    try:
+        response = requests.get(
+            NEWS_API_URL,
+            params=build_params(api_key, country_name),
+            timeout=60
+        )
 
+        data = response.json()
+
+    except requests.RequestException as error:
+        print("Request failed:", error)
+        return []
+
+    
     if data.get("status") != "ok":
         print("API error:", data.get("message"))
         return []
@@ -28,6 +40,7 @@ def get_articles(api_key, country_name):
     return data.get("articles", [])
 
 
+#saves the articles fetched into the databse and counts saved and dupes
 def save_articles(articles, country_name):
     saved_count = 0
     duplicate_count = 0
@@ -49,7 +62,7 @@ def save_articles(articles, country_name):
 
     return saved_count, duplicate_count
 
-
+#main fetch function for each country, fetches, saves and logs results
 def fetch_news(api_key, country_name):
     print(f"\n--- {country_name} ---")
 
