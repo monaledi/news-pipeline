@@ -89,7 +89,7 @@ pip install -r requirements.txt
 
 Create a free account at:
 
-:contentReference[oaicite:0]{index=0}
+https://newsapi.org/
 
 Create a `.env` file in the project root:
 
